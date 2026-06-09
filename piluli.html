@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>План лечения</title>
+
+<style>
+
+:root{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --card2:#334155;
+    --accent:#3b82f6;
+    --success:#22c55e;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:system-ui,sans-serif;
+    min-height:100vh;
+    padding:16px;
+}
+
+.header{
+    margin-bottom:20px;
+}
+
+.header h1{
+    font-size:28px;
+    margin-bottom:5px;
+}
+
+.subtitle{
+    color:var(--muted);
+}
+
+.progress-wrapper{
+    margin-top:15px;
+}
+
+.progress-bar{
+    width:100%;
+    height:12px;
+    background:#1e293b;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    width:0%;
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        #3b82f6,
+        #22c55e
+    );
+    transition:.4s;
+}
+
+.progress-text{
+    margin-top:8px;
+    color:var(--muted);
+    font-size:14px;
+}
+
+.card{
+    background:var(--card);
+    border-radius:20px;
+    padding:16px;
+    margin-bottom:14px;
+    animation:show .3s ease;
+}
+
+.med{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.med input{
+    width:24px;
+    height:24px;
+    accent-color:var(--success);
+}
+
+.med-name{
+    flex:1;
+    font-size:16px;
+}
+
+.med-time{
+    color:var(--muted);
+    font-size:14px;
+}
+
+.done{
+    opacity:.5;
+}
+
+.done .med-name{
+    text-decoration:line-through;
+}
+
+.note{
+    margin-top:20px;
+    background:#172554;
+    border-left:4px solid var(--accent);
+    padding:12px;
+    border-radius:12px;
+}
+
+.footer{
+    text-align:center;
+    color:var(--muted);
+    margin-top:20px;
+    font-size:13px;
+}
+
+@keyframes show{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+
+<h1 id="dayTitle"></h1>
+
+<div class="subtitle">
+План лечения
+</div>
+
+<div class="progress-wrapper">
+
+<div class="progress-bar">
+<div class="progress-fill" id="progress"></div>
+</div>
+
+<div
+class="progress-text"
+id="progressText">
+0%
+</div>
+
+</div>
+
+</div>
+
+<div id="medications"></div>
+
+<div class="footer">
+Все отметки сохраняются автоматически
+</div>
+
+<script>
+
+const START_DATE = "2026-06-10";
+
+function getDay() {
+
+    const start =
+        new Date(START_DATE);
+
+    const now =
+        new Date();
+
+    const diff =
+        Math.floor(
+            (now - start) /
+            86400000
+        ) + 1;
+
+    return Math.min(
+        Math.max(diff,1),
+        28
+    );
+}
+
+const day = getDay();
+
+document
+.getElementById("dayTitle")
+.innerText =
+`💊 День ${day} из 28`;
+
+const meds = [];
+
+function addMed(name,time,key){
+
+    meds.push({
+        name,
+        time,
+        key
+    });
+}
+
+if(day <= 10)
+addMed(
+    "Омез",
+    "08:00",
+    "omez"
+);
+
+if(day <= 7){
+
+    addMed(
+        "Мовалис",
+        "09:00",
+        "mov1"
+    );
+
+    addMed(
+        "Мовалис",
+        "21:00",
+        "mov2"
+    );
+}
+
+if(day <= 21){
+
+    addMed(
+        "Комбилипен",
+        "09:00",
+        "comb1"
+    );
+
+    addMed(
+        "Комбилипен",
+        "21:00",
+        "comb2"
+    );
+}
+
+if(day <= 2){
+
+    addMed(
+        "Мидокалм",
+        "09:00",
+        "mid1"
+    );
+}
+else if(day <= 4){
+
+    addMed(
+        "Мидокалм",
+        "09:00",
+        "mid1"
+    );
+
+    addMed(
+        "Мидокалм",
+        "15:00",
+        "mid2"
+    );
+}
+else if(day <= 14){
+
+    addMed(
+        "Мидокалм",
+        "09:00",
+        "mid1"
+    );
+
+    addMed(
+        "Мидокалм",
+        "15:00",
+        "mid2"
+    );
+
+    addMed(
+        "Мидокалм",
+        "21:00",
+        "mid3"
+    );
+}
+
+addMed(
+    "Адаптол",
+    "09:00",
+    "adapt1"
+);
+
+addMed(
+    "Адаптол",
+    "15:00",
+    "adapt2"
+);
+
+addMed(
+    "Адаптол",
+    "21:00",
+    "adapt3"
+);
+
+if(day <= 5)
+addMed(
+    "Диклофенак (мазь)",
+    "20:00",
+    "ointment"
+);
+
+const container =
+document.getElementById(
+    "medications"
+);
+
+function render(){
+
+    container.innerHTML = "";
+
+    let completed = 0;
+
+    meds.forEach(med=>{
+
+        const storageKey =
+            `day_${day}_${med.key}`;
+
+        const checked =
+            localStorage.getItem(
+                storageKey
+            ) === "1";
+
+        if(checked)
+            completed++;
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+        card.className =
+            `card ${
+                checked
+                ? "done"
+                : ""
+            }`;
+
+        card.innerHTML = `
+        <div class="med">
+
+            <input
+                type="checkbox"
+                ${checked ? "checked" : ""}
+            >
+
+            <div class="med-name">
+                ${med.name}
+            </div>
+
+            <div class="med-time">
+                ${med.time}
+            </div>
+
+        </div>
+        `;
+
+        const checkbox =
+            card.querySelector(
+                "input"
+            );
+
+        checkbox.addEventListener(
+            "change",
+            e => {
+
+                localStorage.setItem(
+                    storageKey,
+                    e.target.checked
+                    ? "1"
+                    : "0"
+                );
+
+                render();
+            }
+        );
+
+        container.appendChild(
+            card
+        );
+    });
+
+    const percent =
+        Math.round(
+            completed /
+            meds.length * 100
+        );
+
+    document
+    .getElementById(
+        "progress"
+    )
+    .style.width =
+        percent + "%";
+
+    document
+    .getElementById(
+        "progressText"
+    )
+    .innerText =
+        `${completed}/${meds.length} (${percent}%)`;
+}
+
+render();
+
+</script>
+
+</body>
+</html>
